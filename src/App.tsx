@@ -252,7 +252,7 @@ function App() {
 
       {/* WhatsApp CTA Fixo */}
       <a
-        href="https://wa.me/5511999999999?text=Olá! Gostaria de um orçamento para meu site."
+        href="https://wa.me/351920790625?text=Olá! Gostaria de um orçamento para meu site."
         target="_blank"
         rel="noopener noreferrer"
         className="fixed bottom-8 right-8 bg-green-500 text-white p-4 rounded-full shadow-lg hover:bg-green-600 transition-colors z-50 flex items-center gap-2"
