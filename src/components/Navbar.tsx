@@ -1,38 +1,84 @@
 import React, { useState, useEffect } from 'react';
 import { Globe, Menu, X } from 'lucide-react';
 
+interface NavLinkProps {
+  href: string;
+  label: string;
+  isActive: boolean;
+  onClick: (e: React.MouseEvent<HTMLAnchorElement>, href: string) => void;
+}
+
+const NavLink = ({ href, label, isActive, onClick }: NavLinkProps) => (
+  <a
+    href={href}
+    className={`relative px-4 py-2 text-sm font-medium transition-colors duration-300
+      ${isActive 
+        ? 'text-black' 
+        : 'text-gray-600 hover:text-black'
+      }`}
+    onClick={(e) => onClick(e, href)}
+  >
+    {label}
+    {isActive && (
+      <span className="absolute bottom-0 left-0 w-full h-0.5 bg-black rounded-full" />
+    )}
+  </a>
+);
+
 export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState('inicio');
 
   useEffect(() => {
-    // Remove hash from URL on page load without scrolling
-    if (window.location.hash) {
-      const scrollPosition = window.pageYOffset;
-      window.location.hash = '';
-      window.scrollTo(0, scrollPosition);
-    }
+    const handleScroll = () => {
+      const sections = navLinks.map(link => link.href.substring(1));
+      const scrollPosition = window.scrollY + 100;
+
+      for (const section of sections) {
+        const element = document.getElementById(section);
+        if (element) {
+          const offsetTop = element.offsetTop;
+          const offsetBottom = offsetTop + element.offsetHeight;
+
+          if (scrollPosition >= offsetTop && scrollPosition < offsetBottom) {
+            setActiveSection(section);
+            break;
+          }
+        }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
-    const element = document.querySelector(href);
+    const targetId = href.substring(1);
+    const element = document.getElementById(targetId);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-      // Update URL without triggering scroll
-      window.history.pushState({}, '', href);
+      const navHeight = 64;
+      const elementPosition = element.offsetTop - navHeight;
+      window.scrollTo({
+        top: elementPosition,
+        behavior: 'smooth'
+      });
+      setActiveSection(targetId);
     }
     setIsMenuOpen(false);
   };
 
   const navLinks = [
     { href: "#inicio", label: "Home" },
+    { href: "#processo", label: "Processo" },
     { href: "#servicos", label: "Serviços" },
     { href: "#portfolio", label: "Portfólio" },
+    { href: "#faq", label: "FAQ" },
     { href: "#contato", label: "Contato" }
   ];
 
   return (
-    <nav className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-sm z-50 border-b border-gray-200">
+    <nav className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-sm z-50 shadow-sm">
       <div className="container mx-auto px-4 sm:px-6 lg:px-12 xl:px-16">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -42,16 +88,15 @@ export function Navbar() {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-6">
+          <div className="hidden md:flex items-center">
             {navLinks.map((link) => (
-              <a
+              <NavLink
                 key={link.href}
                 href={link.href}
-                className="text-gray-600 hover:text-indigo-600 font-medium transition-colors duration-200"
-                onClick={(e) => handleNavClick(e, link.href)}
-              >
-                {link.label}
-              </a>
+                label={link.label}
+                isActive={activeSection === link.href.substring(1)}
+                onClick={handleNavClick}
+              />
             ))}
           </div>
 
@@ -73,14 +118,13 @@ export function Navbar() {
           <div className="md:hidden py-4 border-t">
             <div className="flex flex-col gap-4">
               {navLinks.map((link) => (
-                <a
+                <NavLink
                   key={link.href}
                   href={link.href}
-                  className="text-gray-600 hover:text-indigo-600 font-medium transition-colors duration-200"
-                  onClick={(e) => handleNavClick(e, link.href)}
-                >
-                  {link.label}
-                </a>
+                  label={link.label}
+                  isActive={activeSection === link.href.substring(1)}
+                  onClick={handleNavClick}
+                />
               ))}
             </div>
           </div>
