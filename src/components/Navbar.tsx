@@ -70,11 +70,11 @@ export function Navbar() {
 
   const navLinks = [
     { href: "#inicio", label: "Home" },
-    { href: "#processo", label: "Processo" },
     { href: "#servicos", label: "Serviços" },
+    { href: "#processo", label: "Processo" },
     { href: "#portfolio", label: "Portfólio" },
-    { href: "#faq", label: "FAQ" },
-    { href: "#contato", label: "Contato" }
+    { href: "#contato", label: "Contato" },
+    { href: "#faq", label: "FAQ" }
   ];
 
   return (
